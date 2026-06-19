@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Control de Término Legal – Posible Incumplimiento</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: #111;
+        color: #fff;
+        margin-top: 100px;
+    }
+    .box {
+        border: 2px solid #fff;
+        padding: 30px;
+        display: inline-block;
+        border-radius: 10px;
+    }
+    h1 {
+        margin-bottom: 20px;
+    }
+    #countdown {
+        font-size: 2em;
+        color: #00ffcc;
+    }
+    .deadline {
+        margin-top: 10px;
+        color: #ccc;
+    }
+</style>
+</head>
+<body>
+
+<div class="box">
+    <h1>Control de Término Legal – Posible Incumplimiento</h1>
+    <div id="countdown">Calculando...</div>
+    <div class="deadline" id="deadline"></div>
+</div>
+
+<script>
+function esDiaHabil(fecha) {
+    const dia = fecha.getDay();
+    return dia !== 0 && dia !== 6;
+}
+
+function sumarDiasHabiles(fecha, dias) {
+    let contador = 0;
+    let f = new Date(fecha);
+
+    while (contador < dias) {
+        f.setDate(f.getDate() + 1);
+        if (esDiaHabil(f)) contador++;
+    }
+    return f;
+}
+
+// ⚠️ AJUSTA ESTA FECHA SI CAMBIA
+const fechaEnvio = new Date("2026-05-31");
+
+let fechaInicio = new Date(fechaEnvio);
+while (!esDiaHabil(fechaInicio)) {
+    fechaInicio.setDate(fechaInicio.getDate() + 1);
+}
+
+const fechaLimite = sumarDiasHabiles(fechaInicio, 15);
+
+document.getElementById("deadline").innerText =
+    "Fecha límite: " + fechaLimite.toLocaleDateString();
+
+function actualizar() {
+    const ahora = new Date();
+    const restante = fechaLimite - ahora;
+
+    if (restante <= 0) {
+        document.getElementById("countdown").innerText = "TIEMPO VENCIDO";
+        return;
+    }
+
+    const dias = Math.floor(restante / (1000 * 60 * 60 * 24));
+    const horas = Math.floor((restante / (1000 * 60 * 60)) % 24);
+    const minutos = Math.floor((restante / (1000 * 60)) % 60);
+    const segundos = Math.floor((restante / 1000) % 60);
+
+    document.getElementById("countdown").innerText =
+        `${dias}d ${horas}h ${minutos}m ${segundos}s`;
+}
+
+setInterval(actualizar, 1000);
+actualizar();
+</script>
+
+</body>
+</html>
